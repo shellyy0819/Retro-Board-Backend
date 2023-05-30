@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const routes = require('./routes');
 const app = express();
 dotenv.config();
@@ -27,16 +28,25 @@ app.use(helmet());
 // Enable gzip compression module for REST API
 app.use(compression());
 
-routes.registerRoutes(app);
-
 app.get('/health-check', (req, res) => {
   res.send({ success: true });
 });
 
-try {
-  app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
-  });
-} catch (err) {
-  console.log(`servers setup failed: ${err}`);
-}
+const setupServer = async () => {
+  try {
+    // Add auth
+    // `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`
+    await mongoose.connect('mongodb://127.0.0.1:27017/test1');
+    console.log('mongo connected successfully');
+
+    app.listen(port, () => {
+      console.log(`Server started on port ${port}`);
+    });
+
+    routes.registerRoutes(app);
+  } catch (err) {
+    console.log(`servers setup failed: ${err}`);
+  }
+};
+
+setupServer();
