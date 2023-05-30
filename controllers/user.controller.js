@@ -5,7 +5,7 @@ const User = require('../models/user');
 const { v4 } = require('uuid');
 
 const changePassword = async (req, res, next) => {
-  const { email, oldPassword, newPassword, confirmedPassword } = req?.body || {};
+  const { newPassword, confirmedPassword } = req?.body || {};
   const { id } = req.params || {};
 
   try {
@@ -21,9 +21,9 @@ const changePassword = async (req, res, next) => {
         await user.save();
         return res.json({ success: true, msg: 'Password changed successfully!' });
       }
+      return req.json({ msg: `Password doesn't match!` });
     }
-
-    return req.json({ msg: `Password doesn't match!` });
+    return res.json({ success: false, msg: `Can't find user!` });
   } catch {
     return req.json({ msg: 'Error while changing password, please try again!' });
   }
@@ -32,7 +32,6 @@ const changePassword = async (req, res, next) => {
 const forgetPassword = async (req, res, next) => {
   const { email, newPassword, confirmedPassword } = req?.body || {};
 
-  // if (email && newPassword && confirmedPassword && bcrypt.compareSync(newPassword === confirmedPassword)) {
   try {
     let existingUser = await User.findOne({
       email
@@ -48,15 +47,14 @@ const forgetPassword = async (req, res, next) => {
       }
       return res.json({ success: true, msg: `Password doesn't match!` });
     }
-
-    // return res.json({ success: true, msg: `User doesn't exist!` });
+    return res.json({ success: false, msg: `Can't find user!` });
   } catch (err) {
     return res.json({ success: false, err: err });
   }
 };
 
 const signIn = async (req, res, next) => {
-  const { username, password, email } = req?.body || {};
+  const { password, email } = req?.body || {};
 
   try {
     let user = await User.findOne({
@@ -71,6 +69,7 @@ const signIn = async (req, res, next) => {
 
       return;
     }
+    return res.json({ success: false, msg: `Can't find user!` });
   } catch (err) {
     console.log(err.message);
     res.status(500).send('Error in signing in');
@@ -133,11 +132,6 @@ const signUp = async (req, res, next) => {
     res.status(500).send('Error in Saving');
     return;
   }
-
-  //   UserModal.User.create({
-  //     username: req.body.username
-  //     // password: Bcrypt.hashSync(req.body.password)
-  //   });
 };
 
 module.exports = { signUp, forgetPassword, signIn, changePassword };

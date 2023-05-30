@@ -43,7 +43,7 @@ const userChangePassword = (req, res, next) => {
 
 const userForgetPassword = (req, res, next) => {
   const schema = Joi.object().keys({
-    email: Joi.string().required(),
+    email: Joi.string().email().required(),
     newPassword: Joi.string().min(3).required(),
     confirmedPassword: Joi.string().min(3).required()
   });
