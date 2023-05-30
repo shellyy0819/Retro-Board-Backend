@@ -1,4 +1,4 @@
-const { validateRequest } = require('./index');
+const { validateRequest } = require('../helpers/req-res.helper');
 const Joi = require('joi');
 
 const requestParamterTypes = {
