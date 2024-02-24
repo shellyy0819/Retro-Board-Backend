@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class board extends Model {
+  class Board extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,23 +10,42 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       // board.belongsTo(models.team);
+      this.hasMany(models.Card, {
+        as: 'cards',
+        sourceKey: 'id',
+        foreignKey: 'board_id'
+      });
+      this.belongsTo(models.Team, {
+        as: 'team',
+        targetKey: 'id',
+        foreignKey: 'team_id'
+      });
+      this.belongsToMany(models.Column, {
+        through: models.BoardColumn,
+        as: 'columns',
+        otherKey: 'column_id',
+        targetKey: 'id',
+        foreignKey: 'board_id'
+      });
     }
   }
-  board.init(
+  Board.init(
     {
       name: DataTypes.STRING,
       meeting_date: DataTypes.DATE,
       template: DataTypes.STRING,
-      created_by: DataTypes.STRING
+      created_by: DataTypes.STRING,
+      team_id: DataTypes.STRING
     },
     {
       sequelize,
-      modelName: 'board',
+      modelName: 'Board',
+      tableName: 'boards',
       createdAt: 'created_at',
       updatedAt: 'updated_at'
     }
   );
-  return board;
+  return Board;
 };
 
 // board has many cards, Team has many boards and board belongs to team

@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Column extends Model {
+  class BoardColumn extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,30 +9,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Board, {
-        as: 'Board',
-        targetKey: 'id',
-        foreignKey: 'board_id'
-      });
-      this.hasMany(models.Card, {
-        as: 'cards',
-        sourceKey: 'id',
-        foreignKey: 'column_id'
-      });
     }
   }
-  Column.init(
+  BoardColumn.init(
     {
-      title: DataTypes.STRING,
-      tags: DataTypes.STRING,
-      board_id: DataTypes.UUID
+      board_id: DataTypes.UUID,
+      column_id: DataTypes.UUID
     },
     {
       sequelize,
-      modelName: 'Column',
+      modelName: 'BoardColumn',
+      tableName: 'board_column',
       createdAt: 'created_at',
       updatedAt: 'updated_at'
     }
   );
-  return Column;
+  return BoardColumn;
 };
