@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('boards', {
+    await queryInterface.createTable('team_user', {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -11,20 +11,11 @@ module.exports = {
       },
       team_id: {
         allowNull: false,
-        primaryKey: false,
         type: Sequelize.UUID
       },
-      name: {
-        type: Sequelize.STRING
-      },
-      meeting_date: {
-        type: Sequelize.DATE
-      },
-      template: {
-        type: Sequelize.STRING
-      },
-      created_by: {
-        type: Sequelize.STRING
+      user_id: {
+        allowNull: false,
+        type: Sequelize.UUID
       },
       created_at: {
         type: Sequelize.DATE,
@@ -37,6 +28,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('boards');
+    await queryInterface.dropTable('team_user');
   }
 };

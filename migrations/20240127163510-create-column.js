@@ -16,6 +16,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       board_id: {
+        allowNull: false,
+        primaryKey: false,
         type: Sequelize.UUID
       },
       created_at: {

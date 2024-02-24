@@ -15,6 +15,16 @@ module.exports = {
       order_no: {
         type: Sequelize.INTEGER
       },
+      column_id: {
+        primaryKey: false,
+        type: Sequelize.UUID,
+        allowNull: false
+      },
+      board_id: {
+        primaryKey: false,
+        type: Sequelize.UUID,
+        allowNull: false
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
