@@ -9,14 +9,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Board, {
-        as: 'Board',
-        targetKey: 'id',
-        foreignKey: 'board_id'
-      });
       this.hasMany(models.Card, {
         as: 'cards',
         sourceKey: 'id',
+        foreignKey: 'column_id'
+      });
+      this.belongsToMany(models.Board, {
+        through: models.BoardColumn,
+        as: 'boards',
+        otherKey: 'board_id',
+        targetKey: 'id',
         foreignKey: 'column_id'
       });
     }
@@ -30,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'Column',
+      tableName: 'columns',
       createdAt: 'created_at',
       updatedAt: 'updated_at'
     }
