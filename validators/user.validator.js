@@ -8,15 +8,15 @@ const requestParamterTypes = {
 };
 
 const userSignIn = (req, res, next) => {
-  const schema = Joi.object().keys({ email: Joi.string().required(), password: Joi.string().min(3).required() });
+  const schema = Joi.object().keys({ email_id: Joi.string().required(), password: Joi.string().min(3).required() });
 
   validateRequest(req, res, next, schema, requestParamterTypes.body);
 };
 
 const userSignUp = (req, res, next) => {
   const schema = Joi.object().keys({
-    username: Joi.string(),
-    email: Joi.string().required(),
+    name: Joi.string(),
+    email_id: Joi.string().required(),
     password: Joi.string().min(3).required()
   });
 
@@ -43,7 +43,7 @@ const userChangePassword = (req, res, next) => {
 
 const userForgetPassword = (req, res, next) => {
   const schema = Joi.object().keys({
-    email: Joi.string().email().required(),
+    email_id: Joi.string().email().required(),
     newPassword: Joi.string().min(3).required(),
     confirmedPassword: Joi.string().min(3).required()
   });
