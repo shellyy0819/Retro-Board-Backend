@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-// import UserModal from '../models';
-const User = require('../models/user');
+const { User } = require('../models');
 const { v4 } = require('uuid');
 
 const changePassword = async (req, res, next) => {
@@ -10,7 +9,7 @@ const changePassword = async (req, res, next) => {
 
   try {
     const user = await User.findOne({
-      _id: id
+      where: { id }
     });
 
     if (user) {
@@ -19,57 +18,64 @@ const changePassword = async (req, res, next) => {
 
         user.password = await bcrypt.hash(newPassword, salt);
         await user.save();
-        return res.json({ success: true, msg: 'Password changed successfully!' });
+        return res.json({ success: true, message: 'Password changed successfully!' });
       }
-      return req.json({ msg: `Password doesn't match!` });
+      return req.json({ success: false, message: `Password doesn't match!` });
     }
-    return res.json({ success: false, msg: `Can't find user!` });
+    return res.json({ success: false, message: `Can't find user!` });
   } catch {
-    return req.json({ msg: 'Error while changing password, please try again!' });
+    return res.json({ success: false, message: 'Error while changing password, please try again!', status: 500 });
   }
 };
 
 const forgetPassword = async (req, res, next) => {
-  const { email, newPassword, confirmedPassword } = req?.body || {};
+  const { email_id, newPassword, confirmedPassword } = req?.body || {};
 
   try {
     let existingUser = await User.findOne({
-      email
+      where: { email_id }
     });
 
     if (existingUser) {
       if (newPassword === confirmedPassword) {
         const salt = await bcrypt.genSalt(10); // generate salt
 
-        existingUser.password = await bcrypt.hash(newPassword, salt);
-        await existingUser.save();
-        return res.json({ success: true, msg: 'Password reset successfully!' });
+        const password = await bcrypt.hash(newPassword, salt);
+        await existingUser.update({ password });
+
+        return res.json({ status: 200, success: true, message: 'Password reset successfully!' });
       }
-      return res.json({ success: true, msg: `Password doesn't match!` });
+      return res.json({ status: 400, success: false, message: `Password doesn't match!` });
     }
-    return res.json({ success: false, msg: `Can't find user!` });
+    return res.json({ status: 404, success: false, message: `Can't find user!` });
   } catch (err) {
-    return res.json({ success: false, err: err });
+    return res.json({ status: 500, success: false, err: err });
   }
 };
 
 const signIn = async (req, res, next) => {
-  const { password, email } = req?.body || {};
+  const { password, email_id } = req?.body || {};
 
   try {
     let user = await User.findOne({
-      email
+      where: { email_id }
     });
 
     if (user) {
       bcrypt.compare(password, user.password, (error, result) => {
         // encrypt
-        res.json({ msg: 'Signed in successfully!', result: result });
+        if (result) {
+          // If passwords match, sign in successful
+          res.json({ success: true, message: 'Signed in successfully!', token: result });
+        } else {
+          // If passwords don't match, return authentication failed
+          res.status(401).json({ success: false, message: 'Authentication failed' });
+        }
       });
 
       return;
     }
-    return res.json({ success: false, msg: `Can't find user!` });
+    return res.status(404).json({ success: false, message: `User not found!`, status: 404 });
   } catch (err) {
     console.log(err.message);
     res.status(500).send('Error in signing in');
@@ -78,34 +84,37 @@ const signIn = async (req, res, next) => {
 };
 
 const signUp = async (req, res, next) => {
-  const { username, password, email } = req?.body || {};
+  const { name, password, email_id } = req?.body || {};
 
-  if (!email || !password) {
-    res.json({ success: false, msg: 'Send needed params' });
+  if (!email_id || !password) {
+    res.json({ success: false, message: 'Send needed params' });
     return;
   }
 
   try {
     let user = await User.findOne({
-      email
+      where: {
+        email_id
+      }
     });
 
     if (user) {
       res.status(400).json({
-        msg: 'User Exists'
+        success: false,
+        message: 'User already exists, try logging in',
+        status: 400
       });
       return;
     }
 
-    user = new User({
-      email,
-      password
-    });
-
     const salt = await bcrypt.genSalt(10); // generate salt
-    user.password = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    await user.save(); // save in db
+    user = await User.create({
+      name,
+      email_id,
+      password: hashedPassword
+    });
 
     const payload = {
       user: {
@@ -121,15 +130,20 @@ const signUp = async (req, res, next) => {
       },
       (err, token) => {
         console.log('err, token', err, token);
-        if (err) throw err;
+        if (err) {
+          console.log(err.message);
+          res.status(500).send('Error in JWT Signing');
+          return;
+        }
         res.status(200).json({
+          success: true,
           token
         });
       }
     );
   } catch (err) {
     console.log(err.message);
-    res.status(500).send('Error in Saving');
+    res.status(500).send('Error in Saving User');
     return;
   }
 };
