@@ -21,13 +21,19 @@ module.exports = (sequelize, DataTypes) => {
   }
   TeamUser.init(
     {
-      team_id: DataTypes.UUID,
-      user_id: DataTypes.UUID
+      team_id: {
+        allowNull: false,
+        type: DataTypes.UUID
+      },
+      user_id: {
+        allowNull: false,
+        type: DataTypes.UUID
+      }
     },
     {
       sequelize,
       modelName: 'TeamUser',
-      tableName: 'team_user',
+      tableName: 'teams_users',
       createdAt: 'created_at',
       updatedAt: 'updated_at'
     }

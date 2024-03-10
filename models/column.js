@@ -25,9 +25,17 @@ module.exports = (sequelize, DataTypes) => {
   }
   Column.init(
     {
-      title: DataTypes.STRING,
-      tags: DataTypes.STRING,
-      board_id: DataTypes.UUID
+      title: {
+        type: DataTypes.STRING
+      },
+      tags: {
+        type: DataTypes.STRING
+      },
+      board_id: {
+        allowNull: false,
+        primaryKey: false,
+        type: DataTypes.UUID
+      }
     },
     {
       sequelize,

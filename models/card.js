@@ -23,10 +23,22 @@ module.exports = (sequelize, DataTypes) => {
   }
   Card.init(
     {
-      title: DataTypes.STRING,
-      order_no: DataTypes.INTEGER,
-      column_id: DataTypes.STRING,
-      board_id: DataTypes.STRING
+      title: {
+        type: DataTypes.STRING
+      },
+      order_no: {
+        type: DataTypes.INTEGER
+      },
+      column_id: {
+        allowNull: false,
+        primaryKey: false,
+        type: DataTypes.UUID
+      },
+      board_id: {
+        allowNull: false,
+        primaryKey: false,
+        type: DataTypes.UUID
+      }
     },
     {
       sequelize,

@@ -21,13 +21,19 @@ module.exports = (sequelize, DataTypes) => {
   }
   BoardColumn.init(
     {
-      board_id: DataTypes.UUID,
-      column_id: DataTypes.UUID
+      board_id: {
+        allowNull: false,
+        type: DataTypes.UUID
+      },
+      column_id: {
+        allowNull: false,
+        type: DataTypes.UUID
+      }
     },
     {
       sequelize,
       modelName: 'BoardColumn',
-      tableName: 'board_column',
+      tableName: 'boards_columns',
       createdAt: 'created_at',
       updatedAt: 'updated_at'
     }

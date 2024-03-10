@@ -9,7 +9,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      // board.belongsTo(models.team);
       this.hasMany(models.Card, {
         as: 'cards',
         sourceKey: 'id',
@@ -31,11 +30,25 @@ module.exports = (sequelize, DataTypes) => {
   }
   Board.init(
     {
-      name: DataTypes.STRING,
-      meeting_date: DataTypes.DATE,
-      template: DataTypes.STRING,
-      created_by: DataTypes.STRING,
-      team_id: DataTypes.STRING
+      team_id: {
+        allowNull: false,
+        primaryKey: false,
+        type: DataTypes.UUID
+      },
+      name: {
+        allowNull: false,
+        type: DataTypes.STRING
+      },
+      meeting_date: {
+        type: DataTypes.DATE
+      },
+      template: {
+        type: DataTypes.STRING
+      },
+      created_by: {
+        allowNull: false,
+        type: DataTypes.STRING
+      }
     },
     {
       sequelize,
@@ -47,5 +60,3 @@ module.exports = (sequelize, DataTypes) => {
   );
   return Board;
 };
-
-// board has many cards, Team has many boards and board belongs to team
