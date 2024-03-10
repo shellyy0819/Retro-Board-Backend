@@ -16,14 +16,14 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       column_id: {
+        allowNull: false,
         primaryKey: false,
-        type: Sequelize.UUID,
-        allowNull: false
+        type: Sequelize.UUID
       },
       board_id: {
+        allowNull: false,
         primaryKey: false,
-        type: Sequelize.UUID,
-        allowNull: false
+        type: Sequelize.UUID
       },
       created_at: {
         allowNull: false,

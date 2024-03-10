@@ -21,10 +21,12 @@ module.exports = {
         type: Sequelize.UUID
       },
       created_at: {
+        allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now')
       },
       updated_at: {
+        allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now')
       }

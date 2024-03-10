@@ -15,6 +15,7 @@ module.exports = {
         type: Sequelize.UUID
       },
       name: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       meeting_date: {
@@ -24,9 +25,11 @@ module.exports = {
         type: Sequelize.STRING
       },
       created_by: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       created_at: {
+        allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now')
       },
