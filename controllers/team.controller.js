@@ -36,7 +36,7 @@ const updateTeamName = async (req, res) => {
     }
     if (team?.name?.toLowerCase() === name?.toLowerCase()) {
       // no changes required
-      return res.status(200).json({ status: 200, message: `${name} is already present`, success: false });
+      return res.status(409).json({ status: 409, message: `${name} is already present`, success: false });
     }
     team.name = name;
     await team.save();
