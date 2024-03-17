@@ -32,7 +32,7 @@ const createBoard = (req, res, next) => {
       .required(),
     created_by: Joi.string().required(),
     board_name: Joi.string().required(),
-    meeting_date: Joi.date().required()
+    meeting_date: Joi.date().optional()
   });
 
   validateRequest(req, res, next, schema, requestParamterTypes.body);

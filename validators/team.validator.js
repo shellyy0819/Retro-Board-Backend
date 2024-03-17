@@ -23,4 +23,20 @@ const getBoards = (req, res, next) => {
   validateRequest(req, res, next, schema, requestParamterTypes.query);
 };
 
-module.exports = { teamCreation, getBoards };
+const updateTeamName = (req, res, next) => {
+  const schema = Joi.object().keys({
+    id: Joi.string().required()
+  });
+
+  validateRequest(req, res, next, schema, requestParamterTypes.params);
+};
+
+const requestTeamName = (req, res, next) => {
+  const schema = Joi.object().keys({
+    name: Joi.string().required()
+  });
+
+  validateRequest(req, res, next, schema, requestParamterTypes.body);
+};
+
+module.exports = { teamCreation, getBoards, updateTeamName, requestTeamName };

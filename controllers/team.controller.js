@@ -26,4 +26,26 @@ const getSpecificBoardData = async (req, res) => {
   res.status(200).json({ data: boardData, message: 'Fetched successfully', success: true });
 };
 
-module.exports = { teamCreation, getSpecificBoardData };
+const updateTeamName = async (req, res) => {
+  try {
+    const { id } = req.params || {};
+    const { name } = req.body || {};
+    const team = await Team.findOne({ where: { id } });
+    if (!team) {
+      return res.status(404).json({ message: 'Team not found', success: false });
+    }
+    if (team?.name?.toLowerCase() === name?.toLowerCase()) {
+      // no changes required
+      return res.status(200).json({ status: 200, message: `${name} is already present`, success: false });
+    }
+    team.name = name;
+    await team.save();
+    return res.status(200).json({ status: 200, data: team, message: 'Team name updated successfully', success: true });
+  } catch (error) {
+    // Handle errors
+    console.error('Error updating team name:', error);
+    return res.status(500).json({ status: 500, message: 'Internal server error', success: false });
+  }
+};
+
+module.exports = { teamCreation, getSpecificBoardData, updateTeamName };
