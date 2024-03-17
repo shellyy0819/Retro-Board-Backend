@@ -13,4 +13,14 @@ const teamCreation = (req, res, next) => {
   validateRequest(req, res, next, schema, requestParamterTypes.body);
 };
 
-module.exports = { teamCreation };
+const getBoards = (req, res, next) => {
+  const schema = Joi.object().keys({
+    created_by: Joi.string().optional(),
+    board_name: Joi.string().optional(),
+    meeting_date: Joi.date().optional()
+  });
+
+  validateRequest(req, res, next, schema, requestParamterTypes.query);
+};
+
+module.exports = { teamCreation, getBoards };

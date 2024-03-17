@@ -19,16 +19,12 @@ const serializeBoardBasicData = retroBoards => {
   return allBoards;
 };
 
-const serializeBoardData = retroBoards => {
-  const allBoards = retroBoards?.map(({ id, name, columns, cards }) => {
-    return {
-      id: id,
-      name: name,
-      columns: serializeColumnData(columns, cards)
-    };
+const serializeCardsData = data => {
+  const cardsData = data.map(({ id, title, tags }) => {
+    return { id, name: title, tags };
   });
 
-  return allBoards;
+  return cardsData;
 };
 
 const serializeColumnData = (columns, cards) => {
@@ -40,12 +36,17 @@ const serializeColumnData = (columns, cards) => {
   return columnData;
 };
 
-const serializeCardsData = data => {
-  const cardsData = data.map(({ id, title, tags }) => {
-    return { id, name: title, tags };
+const serializeBoardData = retroBoards => {
+  const allBoards = retroBoards?.map(({ id, name, team_id, columns, cards }) => {
+    return {
+      id,
+      name,
+      team_id,
+      columns: serializeColumnData(columns, cards)
+    };
   });
 
-  return cardsData;
+  return allBoards;
 };
 
 module.exports = { serializeSpecificBoardData, serializeBoardBasicData, serializeBoardData, serializeColumnData, serializeCardsData };

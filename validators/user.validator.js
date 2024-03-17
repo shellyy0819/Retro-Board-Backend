@@ -34,8 +34,8 @@ const userChangePasswordId = (req, res, next) => {
 const userChangePassword = (req, res, next) => {
   const schema = Joi.object().keys({
     oldPassword: Joi.string().min(3).required(),
-    newPassword: Joi.string().min(3).required(),
-    confirmedPassword: Joi.string().min(3).required()
+    new_password: Joi.string().min(3).required(),
+    confirmed_password: Joi.string().min(3).required()
   });
 
   validateRequest(req, res, next, schema, requestParamterTypes.body);
@@ -44,8 +44,8 @@ const userChangePassword = (req, res, next) => {
 const userForgetPassword = (req, res, next) => {
   const schema = Joi.object().keys({
     email_id: Joi.string().email().required(),
-    newPassword: Joi.string().min(3).required(),
-    confirmedPassword: Joi.string().min(3).required()
+    new_password: Joi.string().min(3).required(),
+    confirmed_password: Joi.string().min(3).required()
   });
 
   validateRequest(req, res, next, schema, requestParamterTypes.body);
