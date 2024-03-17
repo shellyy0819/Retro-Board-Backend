@@ -9,6 +9,7 @@ module.exports = {
     ecmaVersion: 'latest'
   },
   rules: {
+    'no-undef': 'error',
     'max-len': 'off',
     'no-use-before-define': 'error',
     'comma-dangle': 'off',

@@ -2,13 +2,6 @@ const { where } = require('sequelize');
 const { Board, Column, Card } = require('../models');
 const { serializeBoardData, serializeBoardBasicData, serializeSpecificBoardData } = require('../serializers/board.serializer');
 
-const getSpecificBoardData = async (req, res) => {
-  const { id } = req.params || {};
-  const retroBoards = await Board.findAll({ where: { id } });
-  const boardData = serializeSpecificBoardData(retroBoards);
-  res.status(200).json({ data: boardData, message: 'Fetched successfully', success: true });
-};
-
 const getBoardBasicData = async (req, res) => {
   try {
     const retroBoards = await Board.findAll();
@@ -67,4 +60,4 @@ const createBoard = async (req, res) => {
   }
 };
 
-module.exports = { getAllRetroBoards, createBoard, getBoardBasicData, getSpecificBoardData };
+module.exports = { getAllRetroBoards, createBoard, getBoardBasicData };

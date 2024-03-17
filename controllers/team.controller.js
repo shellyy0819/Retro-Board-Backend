@@ -1,4 +1,5 @@
-const { Team } = require('../models');
+const { Team, Board } = require('../models');
+const { serializeSpecificBoardData } = require('../serializers/board.serializer');
 
 const teamCreation = async (req, res) => {
   const { name } = req?.body || {};
@@ -18,4 +19,11 @@ const teamCreation = async (req, res) => {
   }
 };
 
-module.exports = { teamCreation };
+const getSpecificBoardData = async (req, res) => {
+  const { id } = req.params || {};
+  const retroBoards = await Board.findAll({ where: { team_id: id } });
+  const boardData = serializeSpecificBoardData(retroBoards);
+  res.status(200).json({ data: boardData, message: 'Fetched successfully', success: true });
+};
+
+module.exports = { teamCreation, getSpecificBoardData };
