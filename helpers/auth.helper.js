@@ -15,14 +15,21 @@ const getToken = authorization => {
   return null;
 };
 
-const verifyToken = async (req, res) => {
+const verifyToken = async req => {
   const { authorization } = req?.headers || {};
   const token = getToken(authorization);
-  if (token) {
-    const decodedToken = await jwt.verify(token, process.env.JWT_SECRET);
-    return decodedToken;
+
+  try {
+    if (token) {
+      const decodedToken = await jwt.verify(token, process.env.JWT_SECRET);
+      return decodedToken;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    throw new Error('Error verifying token:', error);
   }
-  return res.status(401).json({ status: 400, success: false, message: 'You are not authenticated!' });
 };
 
 module.exports = { fetchToken, verifyToken };

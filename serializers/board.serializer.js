@@ -1,5 +1,3 @@
-const { verifyToken } = require('../helpers/auth.helper');
-
 const serializeSpecificBoardData = retroBoards => {
   const allBoards = retroBoards?.map(({ id, name }) => {
     return {
@@ -38,9 +36,7 @@ const serializeColumnData = (columns, cards) => {
   return columnData;
 };
 
-const serializeBoardData = async (retroBoards, req, res) => {
-  const { user } = await verifyToken(req, res);
-
+const serializeBoardData = async (retroBoards, user) => {
   const allBoards = await retroBoards?.map(({ id, name, team_id, columns, cards, created_by }) => {
     return {
       id,

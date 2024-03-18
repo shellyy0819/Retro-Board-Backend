@@ -24,6 +24,12 @@ const teamCreation = async (req, res) => {
 
 const getSpecificBoardData = async (req, res) => {
   const { id } = req.params || {};
+  const token = await verifyToken(req, res);
+  const { user } = token || {};
+
+  if (!token) {
+    return res.status(401).json({ status: 400, success: false, message: 'You are not authenticated!' });
+  }
 
   try {
     const retroBoards = await Board.findAll({
@@ -40,7 +46,7 @@ const getSpecificBoardData = async (req, res) => {
       ]
     });
 
-    const boardData = await serializeBoardData(retroBoards, req, res);
+    const boardData = await serializeBoardData(retroBoards, user);
 
     if (retroBoards?.length) {
       res.status(200).json({ data: boardData, message: 'Boards fetched successfully', success: true });
