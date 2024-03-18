@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
-const { v4 } = require('uuid');
 
 const fetchToken = async payload => {
-  const token = jwt.sign(payload, v4(), {
-    expiresIn: 50000
+  const token = await jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: 500000
   });
 
   return token;
