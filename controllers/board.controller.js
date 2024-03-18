@@ -1,12 +1,14 @@
-const { Board, Column, Card } = require('../models');
-const { serializeBoardData, serializeBoardBasicData, serializeSpecificBoardData } = require('../serializers/board.serializer');
+const { verifyToken } = require('../helpers/auth.helper');
+const { Board, Column, Card, BoardColumn } = require('../models');
+const { serializeBoardData, serializeBoardBasicData } = require('../serializers/board.serializer');
 
+// Not needed
 const getBoardBasicData = async (req, res) => {
   try {
     const retroBoards = await Board.findAll();
     const boardData = serializeBoardBasicData(retroBoards);
     if (retroBoards?.length) {
-      res.status(200).json({ data: boardData, message: 'Fetched successfully', success: true });
+      res.status(200).json({ data: boardData, message: 'Boards fetched successfully', success: true });
     } else {
       res.status(404).json({ message: 'No retro boards found', success: false });
     }
@@ -16,6 +18,7 @@ const getBoardBasicData = async (req, res) => {
   }
 };
 
+// Not needed
 const getAllRetroBoards = async (req, res) => {
   try {
     const retroBoards = await Board.findAll({
@@ -30,9 +33,9 @@ const getAllRetroBoards = async (req, res) => {
         }
       ]
     });
-    const boardData = serializeBoardData(retroBoards);
+    const boardData = await serializeBoardData(retroBoards);
     if (retroBoards?.length) {
-      res.status(200).json({ data: boardData, message: 'Fetched successfully', success: true });
+      res.status(200).json({ data: boardData, message: 'Boards fetched successfully', success: true });
     } else {
       res.status(404).json({ message: 'No retro boards found', success: false });
     }
@@ -43,15 +46,39 @@ const getAllRetroBoards = async (req, res) => {
 };
 
 const createBoard = async (req, res) => {
-  const { board_name, created_by, meeting_date, team_id } = req.body || {};
+  const { board_name, meeting_date, team_id, template } = req.body || {};
+
+  const { user } = await verifyToken(req, res);
+
   try {
-    const board = Board.build({
+    const board = await Board.create({
       name: board_name,
-      created_by,
+      created_by: user?.email_id,
       meeting_date,
       team_id
     });
-    await board.save();
+
+    if (template === 'GOOD_BAD_BETTER' || !template) {
+      // Create column data
+      const columnData = [{ title: 'Good' }, { title: 'Bad' }, { title: 'Improve' }, { title: 'Kudos' }];
+
+      // Create columns concurrently
+      const columns = await Promise.all(
+        columnData.map(async columnInfo => {
+          const column = await Column.create({ ...columnInfo, board_id: board?.id });
+          return column;
+        })
+      );
+
+      // Create board columns concurrently
+      await Promise.all(
+        columns.map(async column => {
+          const boardColumn = await BoardColumn.create({ board_id: board?.id, column_id: column?.id });
+          return boardColumn;
+        })
+      );
+    }
+
     res.status(200).json({ message: 'Board created successfully', success: true });
   } catch (error) {
     console.error('Error fetching retro boards', error);
