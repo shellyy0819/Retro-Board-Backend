@@ -1,8 +1,10 @@
-const { Team, Board } = require('../models');
-const { serializeSpecificBoardData } = require('../serializers/board.serializer');
+const { verifyToken } = require('../helpers/auth.helper');
+const { Team, Board, TeamUser, Column, Card } = require('../models');
+const { serializeBoardData } = require('../serializers/board.serializer');
 
 const teamCreation = async (req, res) => {
   const { name } = req?.body || {};
+  const { user } = await verifyToken(req, res);
 
   try {
     const newTeam = await Team.findOne({ where: { name } });
@@ -11,6 +13,7 @@ const teamCreation = async (req, res) => {
     }
 
     const team = await Team.create({ name });
+    await TeamUser.create({ team_id: team.team_id, user_id: user?.id });
 
     return res.status(201).json({ status: 200, success: true, data: team });
   } catch (error) {
@@ -21,9 +24,33 @@ const teamCreation = async (req, res) => {
 
 const getSpecificBoardData = async (req, res) => {
   const { id } = req.params || {};
-  const retroBoards = await Board.findAll({ where: { team_id: id } });
-  const boardData = serializeSpecificBoardData(retroBoards);
-  res.status(200).json({ data: boardData, message: 'Fetched successfully', success: true });
+
+  try {
+    const retroBoards = await Board.findAll({
+      where: { team_id: id },
+      include: [
+        {
+          model: Column,
+          as: 'columns'
+        },
+        {
+          model: Card,
+          as: 'cards' // Specify the alias for the association
+        }
+      ]
+    });
+
+    const boardData = await serializeBoardData(retroBoards, req, res);
+
+    if (retroBoards?.length) {
+      res.status(200).json({ data: boardData, message: 'Boards fetched successfully', success: true });
+    } else {
+      res.status(404).json({ message: 'No retro boards found', success: false });
+    }
+  } catch (error) {
+    console.error('Error fetching retro boards', error);
+    res.status(500).json({ message: error, success: false });
+  }
 };
 
 const updateTeamName = async (req, res) => {
