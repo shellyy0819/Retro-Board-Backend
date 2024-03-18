@@ -1,4 +1,3 @@
-const { where } = require('sequelize');
 const { Board, Column, Card } = require('../models');
 const { serializeBoardData, serializeBoardBasicData, serializeSpecificBoardData } = require('../serializers/board.serializer');
 
