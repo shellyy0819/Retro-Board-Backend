@@ -30,7 +30,7 @@ const createBoard = (req, res, next) => {
         version: ['uuidv4', 'uuidv5']
       })
       .required(),
-    created_by: Joi.string().required(),
+    created_by: Joi.string().optional(),
     board_name: Joi.string().required(),
     meeting_date: Joi.date().optional()
   });
