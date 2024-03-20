@@ -86,8 +86,8 @@ const getSpecificBoardData = async (req, res) => {
 
     const boardData = await serializeBoardData(retroBoards, user);
 
-    if (retroBoards?.length) {
-      res.status(200).json({ data: boardData, message: 'Boards fetched successfully', success: true });
+    if (boardData?.length) {
+      res.status(200).json({ data: boardData[0], message: 'Board fetched successfully', success: true });
     } else {
       res.status(404).json({ message: 'No retro boards found', success: false });
     }
