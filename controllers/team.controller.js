@@ -22,7 +22,7 @@ const teamCreation = async (req, res) => {
   }
 };
 
-const getSpecificBoardData = async (req, res) => {
+const getAllBoardsData = async (req, res) => {
   const { id } = req.params || {};
   const token = await verifyToken(req, res);
   const { user } = token || {};
@@ -34,6 +34,44 @@ const getSpecificBoardData = async (req, res) => {
   try {
     const retroBoards = await Board.findAll({
       where: { team_id: id },
+      include: [
+        {
+          model: Column,
+          as: 'columns'
+        },
+        {
+          model: Card,
+          as: 'cards' // Specify the alias for the association
+        }
+      ]
+    });
+
+    const boardData = await serializeBoardData(retroBoards, user);
+
+    if (retroBoards?.length) {
+      res.status(200).json({ data: boardData, message: 'Boards fetched successfully', success: true });
+    } else {
+      res.status(404).json({ message: 'No retro boards found', success: false });
+    }
+  } catch (error) {
+    console.error('Error fetching retro boards', error);
+    res.status(500).json({ message: error, success: false });
+  }
+};
+
+const getSpecificBoardData = async (req, res) => {
+  const { team_id, board_id } = req.params || {}; // board_id
+
+  const token = await verifyToken(req, res);
+  const { user } = token || {};
+
+  if (!token) {
+    return res.status(401).json({ status: 400, success: false, message: 'You are not authenticated!' });
+  }
+
+  try {
+    const retroBoards = await Board.findAll({
+      where: { team_id, id: board_id }, // , id: board_id
       include: [
         {
           model: Column,
@@ -81,4 +119,4 @@ const updateTeamName = async (req, res) => {
   }
 };
 
-module.exports = { teamCreation, getSpecificBoardData, updateTeamName };
+module.exports = { teamCreation, getSpecificBoardData, updateTeamName, getAllBoardsData };
