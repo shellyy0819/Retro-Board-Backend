@@ -60,7 +60,7 @@ const getAllBoardsData = async (req, res) => {
 };
 
 const getSpecificBoardData = async (req, res) => {
-  const { team_id, board_id } = req.params || {}; // board_id
+  const { team_id, board_id } = req.params || {};
 
   const token = await verifyToken(req, res);
   const { user } = token || {};
@@ -71,7 +71,7 @@ const getSpecificBoardData = async (req, res) => {
 
   try {
     const retroBoards = await Board.findAll({
-      where: { team_id, id: board_id }, // , id: board_id
+      where: { team_id, id: board_id },
       include: [
         {
           model: Column,
