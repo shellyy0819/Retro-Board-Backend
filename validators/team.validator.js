@@ -23,6 +23,15 @@ const getBoards = (req, res, next) => {
   validateRequest(req, res, next, schema, requestParamterTypes.query);
 };
 
+const getSpecificBoard = (req, res, next) => {
+  const schema = Joi.object().keys({
+    team_id: Joi.string().guid().required(),
+    board_id: Joi.string().guid().required()
+  });
+
+  validateRequest(req, res, next, schema, requestParamterTypes.params);
+};
+
 const updateTeamName = (req, res, next) => {
   const schema = Joi.object().keys({
     id: Joi.string().required()
@@ -39,4 +48,4 @@ const requestTeamName = (req, res, next) => {
   validateRequest(req, res, next, schema, requestParamterTypes.body);
 };
 
-module.exports = { teamCreation, getBoards, updateTeamName, requestTeamName };
+module.exports = { teamCreation, getBoards, updateTeamName, requestTeamName, getSpecificBoard };
