@@ -13,7 +13,7 @@ const teamCreation = async (req, res) => {
     }
 
     const team = await Team.create({ name });
-    await TeamUser.create({ team_id: team.team_id, user_id: user?.id });
+    await TeamUser.create({ team_id: team.id, user_id: user?.id });
 
     return res.status(201).json({ status: 200, success: true, data: team });
   } catch (error) {
